@@ -1,0 +1,7 @@
+streamlit
+panads
+requests
+plotly
+seaborn
+matplotlib
+pytest
