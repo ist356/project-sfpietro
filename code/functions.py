@@ -1,7 +1,6 @@
 from datetime import datetime as dt
 import requests
 import pandas as pd
-import http.client
 import time
 import pytz
 
@@ -108,6 +107,7 @@ def get_birth_chart_data(name, date, time, lat, lon, city, nation, timezone):
     response = requests.post(url, json=payload, headers=headers)
     
     if response.status_code == 200:
+        #print(response.json())
         return response.json()
     else:
         print(f"Error {response.status_code}: {response.text}")
@@ -117,13 +117,35 @@ def process_birth_chart(raw_data):
     '''
     process data to get each placement
     '''
-    pass
+    data = raw_data['data']
+    planets = {key: value for key, value in data.items() if key in [
+        'sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'
+        ]}
+    houses = {key: value for key, value in data.items() if 'house' in key}
 
-def get_sign(chart):
+    planets_df = pd.DataFrame.from_dict(planets, orient='index')
+    houses_df = pd.DataFrame.from_dict(houses, orient='index')
+
+    aspects = raw_data.get('aspects',{})
+    aspects_df = pd.DataFrame.from_dict(aspects)
+
+    return planets_df, houses_df, aspects_df
+
+
+def get_big_three(raw_data, chart):
     '''
     find star sign from birth chart data
     '''
-    pass
+    sun_sign = planets_df.loc[planets_df['name'] == 'Sun', 'sign'].values[0]
+    moon_sign = planets_df.loc[planets_df['name'] == 'Moon', 'sign'].values[0]
+    rising_sign = raw_data.get('data',{}).get('first_house', {}).get('sign', 'Unkown')
+
+    big_three = {
+        f"Sun: {sun_sign}",
+        f"Moon: {moon_sign}",
+        f"Rising: {rising_sign}"
+    }
+    return big_three
 
 def get_horoscope_data(sign):
     '''
@@ -132,16 +154,16 @@ def get_horoscope_data(sign):
     pass
 
 if __name__ == "__main__":
+    '''
     name = "Maggy"
     birth_date = "1968-12-17"
     birth_time = "3:00"
     birth_place = "Maryland"
     '''
     name = "Sofia"
-    birth_date = "2004-09-24"
+    birth_date = "2004-09-19"
     birth_time = "11:11"
     birth_place = "Boston"
-    '''
 
     lat, lon = get_lat_lon(birth_place)
     if lat and lon:
@@ -150,7 +172,21 @@ if __name__ == "__main__":
             timezone = get_timezone(lat, lon)
             #print(f"Latitude: {lat}, Longitude: {lon}, City: {city}, Nation: {nation}, Timezone: {timezone}")
             raw = get_birth_chart_data(name, birth_date, birth_time, lat, lon, city, nation, timezone)
-            print(raw)
-        #process_birth_chart(raw)
+            #print(raw)
+            if raw and 'data' in raw:
+                planets_df, houses_df, aspects_df = process_birth_chart(raw)
+                '''
+                print("Planets Data:")
+                print(planets_df)
+                print("\nHouses Data:")
+                print(houses_df)
+                print("\nAspects Data:")
+                print(aspects_df)
+                '''
+                #print(planets_df)
+                big_three = get_big_three(raw, planets_df)
+                print(big_three)
+            else:
+                print("Invalid or empty response")
     else:
         print("Could not fetch data")
