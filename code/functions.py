@@ -51,7 +51,7 @@ def reverse_geocode(lat, lon):
             nation = item['long_name']
     return city, nation
 
-def get_timezone(city, nation):
+def get_timezone(lat, lon):
     '''
     get timezone from city & nation input
     '''
@@ -79,22 +79,17 @@ def get_birth_chart_data(name, date, time, lat, lon, city, nation, timezone):
     '''
     Get birth chart data from API based on user inmput
     '''
-    birth_date = dt.strptime(date, "%Y-%m-%d").date()
-    birth_time = dt.strptime(time, "%H:%M").time()
-    #birth_place = "Boston"
-    #birth_country = "America"
-    #timezone = "EST"
     url = "https://astrologer.p.rapidapi.com/api/v4/birth-chart"
     key = "fee9b48bc8mshf7ffdb8d9a08daap14d36bjsn4ee22ef704f9"
     host = "astrologer.p.rapidapi.com"
     payload = {
         "subject": {
             "name": name,
-            "year": birth_date.year,
-            "month": birth_date.month,
-            "day": birth_date.day,
-            "hour": birth_time.hour,
-            "minute": birth_time.minute,
+            "year": date.year,
+            "month": date.month,
+            "day": date.day,
+            "hour": time.hour,
+            "minute": time.minute,
             "latitude": lat,
             "longitude": lon,
             "city": city,
@@ -117,60 +112,84 @@ def process_birth_chart(raw_data):
     '''
     process data to get each placement
     '''
+    sign_translation = {
+    "Ari": "Aries",
+    "Tau": "Taurus",
+    "Gem": "Gemini",
+    "Can": "Cancer",
+    "Leo": "Leo",
+    "Vir": "Virgo",
+    "Lib": "Libra",
+    "Sco": "Scorpio",
+    "Sag": "Sagittarius",
+    "Cap": "Capricorn",
+    "Aqu": "Aquarius",
+    "Pis": "Pisces"
+    }
+
     data = raw_data['data']
     planets = {key: value for key, value in data.items() if key in [
         'sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'
         ]}
-    houses = {key: value for key, value in data.items() if 'house' in key}
+   #houses = {key: value for key, value in data.items() if 'house' in key}
 
     planets_df = pd.DataFrame.from_dict(planets, orient='index')
-    houses_df = pd.DataFrame.from_dict(houses, orient='index')
+    planets_df['sign'] = planets_df['sign'].replace(sign_translation)
+    #houses_df = pd.DataFrame.from_dict(houses, orient='index')
+    #aspects = raw_data.get('aspects',{})
+    #aspects_df = pd.DataFrame.from_dict(aspects)
 
-    aspects = raw_data.get('aspects',{})
-    aspects_df = pd.DataFrame.from_dict(aspects)
-
-    return planets_df, houses_df, aspects_df
+    return planets_df #, houses_df, aspects_df
 
 
 def get_big_three(raw_data, chart):
     '''
     find star sign from birth chart data
     '''
-    sun_sign = planets_df.loc[planets_df['name'] == 'Sun', 'sign'].values[0]
-    moon_sign = planets_df.loc[planets_df['name'] == 'Moon', 'sign'].values[0]
+    sun_sign = chart.loc[chart['name'] == 'Sun', 'sign'].values[0]
+    moon_sign = chart.loc[chart['name'] == 'Moon', 'sign'].values[0]
     rising_sign = raw_data.get('data',{}).get('first_house', {}).get('sign', 'Unkown')
 
     big_three = {
-        f"Sun: {sun_sign}",
-        f"Moon: {moon_sign}",
-        f"Rising: {rising_sign}"
+        "sun" :   sun_sign,
+        "moon":   moon_sign,
+        "rising": rising_sign
     }
     return big_three
 
-def get_horoscope_data(sign):
+def get_horoscope_data():
     '''
     fetch daily horoscope for sign
     '''
+    url = "https://horoscopeapi-horoscope-v1.p.rapidapi.com/daily"
+    querystring = {"date":"today"}
+    headers = {
+	"x-rapidapi-key": "fee9b48bc8mshf7ffdb8d9a08daap14d36bjsn4ee22ef704f9",
+	"x-rapidapi-host": "horoscopeapi-horoscope-v1.p.rapidapi.com"}
+    response = requests.get(url, headers=headers, params=querystring)
+    return(response.json())
+
+def process_horoscope_data(horoscope, sign):
     pass
 
 if __name__ == "__main__":
-    '''
-    name = "Maggy"
-    birth_date = "1968-12-17"
-    birth_time = "3:00"
-    birth_place = "Maryland"
-    '''
+
     name = "Sofia"
-    birth_date = "2004-09-19"
-    birth_time = "11:11"
+    birth_date_str = "2004-09-19"
+    birth_time_str = "11:11"
     birth_place = "Boston"
+    birth_date = dt.strptime(birth_date_str, "%Y-%m-%d").date()
+    birth_time = dt.strptime(birth_time_str, "%H:%M").time()
+    birth_place = "Boston"
+    birth_country = "America"
+    timezone = "EST"
 
     lat, lon = get_lat_lon(birth_place)
     if lat and lon:
         city, nation = reverse_geocode(lat,lon)
         if city and nation:
             timezone = get_timezone(lat, lon)
-            #print(f"Latitude: {lat}, Longitude: {lon}, City: {city}, Nation: {nation}, Timezone: {timezone}")
+            print(f"Latitude: {lat}, Longitude: {lon}, City: {city}, Nation: {nation}, Timezone: {timezone}")
             raw = get_birth_chart_data(name, birth_date, birth_time, lat, lon, city, nation, timezone)
             #print(raw)
             if raw and 'data' in raw:
@@ -183,7 +202,7 @@ if __name__ == "__main__":
                 print("\nAspects Data:")
                 print(aspects_df)
                 '''
-                #print(planets_df)
+                print(planets_df)
                 big_three = get_big_three(raw, planets_df)
                 print(big_three)
             else:
