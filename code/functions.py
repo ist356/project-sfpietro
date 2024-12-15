@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+import plotly.express as px
 import requests
 import pandas as pd
 import time
@@ -214,6 +215,10 @@ def get_more_info(placement, sign):
     "Virgo": "detail-oriented, analytical, and hardworking traits. You value practicality and are dedicated to helping others.", 
     "Libra": "diplomatic, charming, and fair-minded traits. You strive for balance and harmony in all aspects of life.", 
     "Scorpio": "passionate, resourceful, and mysterious traits. You are deeply connected to transformation and intense emotions.",
+    "Sagittarius": "optimistic, adventurous, and independent traits. You crave freedom and thrive on exploration.", 
+    "Capricorn": "ambitious, disciplined, and patient traits. You are focused on achieving long-term success and building a solid foundation.", 
+    "Aquarius": "innovative, humanitarian, and independent traits. You think outside the box and value progress.", 
+    "Pisces": "compassionate, artistic, and intuitive traits. You are deeply connected to emotions and creativity." 
     }
 
     #placement = "Sun"
@@ -221,8 +226,30 @@ def get_more_info(placement, sign):
     sign = sign.strip()
     placement = placement.strip()
     placement_info = placements_dict[placement]
-    zodiac_info = zodiac_traits[sign] #need code to deal with what to do when the key is not found
+    zodiac_info = zodiac_traits[sign]
     return placement_info, zodiac_info
+
+def plot_scatter(df):
+    fig = px.scatter(
+        df,
+        x="sign",
+        y="name",
+        color="element",
+        size=None,
+        hover_data=["position"],
+        title="Planets Placements in Zodiac Signs",
+        labels={"name": "Planet", "sign": "Zodiac Sign"}
+    )
+    return fig
+
+def plot_pie_chart(df):
+    fig = px.pie(
+        df,
+        names="sign",
+        title="Distribution of Planet Signs",
+        color = "element",
+    )
+    return fig
 
 if __name__ == "__main__":
 
@@ -267,7 +294,7 @@ if __name__ == "__main__":
 Whats left to do:
 - center the form
 - center the table
-- finish getting more_info to work
 - create test code
+- ensure that if not a valid location the code does not run
 
 '''
