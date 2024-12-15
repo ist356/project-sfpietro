@@ -73,9 +73,9 @@ def test_get_big_three():
         "sign": ["Leo", "Sagittarius"] 
     }) 
     big_three = get_big_three(raw_data, chart) 
-    assert big_three["sun"] == "Leo" 
-    assert big_three["moon"] == "Sagittarius" 
-    assert big_three["rising"] == "Gemini" 
+    assert big_three["sun"] == "Leo♌️" 
+    assert big_three["moon"] == "Sagittarius♐️" 
+    assert big_three["rising"] == "Gemini♊️" 
 
 # Test for get_horoscope_data 
 

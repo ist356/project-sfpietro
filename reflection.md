@@ -23,3 +23,4 @@ Examples:
 
 `--- Reflection Below This Line ---`
 
+I really enjoyed this project. I have learned how to integrate multiple APIs effectively (Google Maps and Rapid API). I also became more confident in my ability to use Plotly and other visualization tools. It was one of the last features I added to my project, but it was super easy to implement and customize. I also learned and practiced how to make Pytests for my code, which was very helpful. One of the biggest challenges I faced was how to handle user errors. Initially, my program would crash if users entered incomplete or incorrect data. I fixed this by using checks and clear error messages. If I had more time, I would add an in-depth explanation to all the signs and placements, as well as a more interactive visual. I found an API that creates a visual mapping of your birth chart, which I thought was very interesting but too complicated for this project. Overall, I really enjoyed this project and this class.

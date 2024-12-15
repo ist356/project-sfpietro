@@ -19,6 +19,9 @@ if "form_submitted" not in st.session_state:
 def submit_form():
     st.session_state.form_submitted = True
 
+image_path = "code/images/banner.jpg"
+st.image(image_path, use_container_width=True)
+
 with st.form("birth_chart_form"):
     t1, t2, t3 = st.columns([1,2,1])
     with t2:
@@ -75,7 +78,7 @@ if st.session_state.form_submitted:
                 df = planets_df
                 with second_col1:
                     if st.button("Get Daily Horoscope"):
-                        main_sign = big_three['sun']
+                        main_sign = df.loc[df['name'] == 'Sun', 'sign'].values[0]
                         horoscope = get_horoscope_data(main_sign)
                         if horoscope:
                             st.caption(f'"*{horoscope}*"')
