@@ -178,7 +178,7 @@ def get_horoscope_data(sign):
     fetch daily horoscope for sign
     '''
     url = "https://daily-horoscope-api.p.rapidapi.com/api/Daily-Horoscope-English/"
-    querystring = {"zodiacSign":"virgo","timePeriod":"weekly"}
+    querystring = {"zodiacSign":sign,"timePeriod":"weekly"}
     headers = {
         "x-rapidapi-key": "fee9b48bc8mshf7ffdb8d9a08daap14d36bjsn4ee22ef704f9",
         "x-rapidapi-host": "daily-horoscope-api.p.rapidapi.com"
@@ -230,11 +230,13 @@ def get_more_info(placement, sign):
     return placement_info, zodiac_info
 
 def plot_scatter(df):
+    rainbow = px.colors.qualitative.Plotly
     fig = px.scatter(
         df,
         x="sign",
         y="name",
-        color="element",
+        color="sign",
+        color_discrete_sequence=rainbow,
         size=None,
         hover_data=["position"],
         title="Planets Placements in Zodiac Signs",
@@ -243,11 +245,13 @@ def plot_scatter(df):
     return fig
 
 def plot_pie_chart(df):
+    element_colors = {'Water': '#5DADE2','Air': '#AED6F1','Earth': '#2e8b57','Fire': '#c0392b'}
     fig = px.pie(
         df,
         names="sign",
         title="Distribution of Planet Signs",
         color = "element",
+        color_discrete_map=element_colors
     )
     return fig
 
