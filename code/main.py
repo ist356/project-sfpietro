@@ -6,6 +6,12 @@ import pandas as pd
 import streamlit as st
 from functions import *
 
+st.set_page_config(
+    page_title="Birth Chart & Horoscope🌌",
+    page_icon="✨",
+    layout="wide"
+)
+
 if "form_submitted" not in st.session_state:
     st.session_state.form_submitted = False
 
@@ -42,11 +48,12 @@ if st.session_state.form_submitted:
     if st.button("Get Daily Horoscope"):
         main_sign = big_three['sun']
         horoscope = get_horoscope_data(main_sign)
-        st.write(f'"{horoscope}"')
+        st.caption(f'"*{horoscope}*"')
 
 
 '''
 Whats left to do:
+- make table show only useful information
 - hover feature of details
 - google api to complete search for birth_place
 - make it look pretty
