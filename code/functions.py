@@ -5,7 +5,6 @@ import pandas as pd
 import time
 import pytz
 
-
 def get_lat_lon(location):
     '''
     Get lat and long coordinates from location input
@@ -161,15 +160,29 @@ def get_big_three(raw_data, chart):
         "Aqu": "Aquarius",
         "Pis": "Pisces"
     }
+    zodiac_emojis = {
+                     "Aries":       "♈️", 
+                     "Taurus":      "♉️", 
+                     "Gemini":      "♊️", 
+                     "Cancer":      "♋️", 
+                     "Leo":         "♌️", 
+                     "Virgo":       "♍️", 
+                     "Libra":       "♎️", 
+                     "Scorpio":     "♏️", 
+                     "Sagittarius": "♐️", 
+                     "Capricorn":   "♑️", 
+                     "Aquarius":    "♒️", 
+                     "Pisces":      "♓️"
+    }
     sun_sign = chart.loc[chart['name'] == 'Sun', 'sign'].values[0]
     moon_sign = chart.loc[chart['name'] == 'Moon', 'sign'].values[0]
     rising_sign = raw_data.get('data',{}).get('first_house', {}).get('sign', 'Unkown')
     rising_sign = sign_translation.get(rising_sign, rising_sign)
 
     big_three = {
-        "sun" :   sun_sign,
-        "moon":   moon_sign,
-        "rising": rising_sign
+        "sun" :   sun_sign + zodiac_emojis[sun_sign],
+        "moon":   moon_sign + zodiac_emojis[moon_sign],
+        "rising": rising_sign + zodiac_emojis[rising_sign]
     }
     return big_three
 
@@ -191,6 +204,7 @@ def get_horoscope_data(sign):
             reading = horoscope.get("prediction", "No avaliable horoscope")
             return reading
     else:
+        print("boo")
         return None
     
 def get_more_info(placement, sign):
@@ -235,7 +249,7 @@ def plot_scatter(df):
         df,
         x="sign",
         y="name",
-        color="sign",
+        color="name",
         color_discrete_sequence=rainbow,
         size=None,
         hover_data=["position"],
@@ -245,7 +259,7 @@ def plot_scatter(df):
     return fig
 
 def plot_pie_chart(df):
-    element_colors = {'Water': '#5DADE2','Air': '#AED6F1','Earth': '#2e8b57','Fire': '#c0392b'}
+    element_colors = { "Water": '#304D79', "Air": '#7d9696', "Earth": '#1C5034', "Fire":'#7F3C3C' }
     fig = px.pie(
         df,
         names="sign",
@@ -274,14 +288,12 @@ if __name__ == "__main__":
             #print(raw)
             if raw and 'data' in raw:
                 planets_df = process_birth_chart(raw)
-                '''
                 print("Planets Data:")
                 print(planets_df)
                 print("\nHouses Data:")
                 print(houses_df)
                 print("\nAspects Data:")
                 print(aspects_df)
-                '''
                 #print(planets_df)
                 big_three = get_big_three(raw, planets_df)
                 #print(big_three)
@@ -295,10 +307,8 @@ if __name__ == "__main__":
         print("Could not fetch data")
 
 '''
-Whats left to do:
-- center the form
-- center the table
-- create test code
-- ensure that if not a valid location the code does not run
-
+THINGS TO DO:
+- finish debugging
+- add picture
+- THATS IT
 '''
