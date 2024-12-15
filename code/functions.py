@@ -113,18 +113,18 @@ def process_birth_chart(raw_data):
     process data to get each placement
     '''
     sign_translation = {
-    "Ari": "Aries",
-    "Tau": "Taurus",
-    "Gem": "Gemini",
-    "Can": "Cancer",
-    "Leo": "Leo",
-    "Vir": "Virgo",
-    "Lib": "Libra",
-    "Sco": "Scorpio",
-    "Sag": "Sagittarius",
-    "Cap": "Capricorn",
-    "Aqu": "Aquarius",
-    "Pis": "Pisces"
+        "Ari": "Aries",
+        "Tau": "Taurus",
+        "Gem": "Gemini",
+        "Can": "Cancer",
+        "Leo": "Leo",
+        "Vir": "Virgo",
+        "Lib": "Libra",
+        "Sco": "Scorpio",
+        "Sag": "Sagittarius",
+        "Cap": "Capricorn",
+        "Aqu": "Aquarius",
+        "Pis": "Pisces"
     }
 
     data = raw_data['data']
@@ -146,9 +146,24 @@ def get_big_three(raw_data, chart):
     '''
     find star sign from birth chart data
     '''
+    sign_translation = {
+        "Ari": "Aries",
+        "Tau": "Taurus",
+        "Gem": "Gemini",
+        "Can": "Cancer",
+        "Leo": "Leo",
+        "Vir": "Virgo",
+        "Lib": "Libra",
+        "Sco": "Scorpio",
+        "Sag": "Sagittarius",
+        "Cap": "Capricorn",
+        "Aqu": "Aquarius",
+        "Pis": "Pisces"
+    }
     sun_sign = chart.loc[chart['name'] == 'Sun', 'sign'].values[0]
     moon_sign = chart.loc[chart['name'] == 'Moon', 'sign'].values[0]
     rising_sign = raw_data.get('data',{}).get('first_house', {}).get('sign', 'Unkown')
+    rising_sign = sign_translation.get(rising_sign, rising_sign)
 
     big_three = {
         "sun" :   sun_sign,
@@ -157,32 +172,34 @@ def get_big_three(raw_data, chart):
     }
     return big_three
 
-def get_horoscope_data():
+def get_horoscope_data(sign):
     '''
     fetch daily horoscope for sign
     '''
-    url = "https://horoscopeapi-horoscope-v1.p.rapidapi.com/daily"
-    querystring = {"date":"today"}
+    url = "https://daily-horoscope-api.p.rapidapi.com/api/Daily-Horoscope-English/"
+    querystring = {"zodiacSign":"virgo","timePeriod":"weekly"}
     headers = {
-	"x-rapidapi-key": "fee9b48bc8mshf7ffdb8d9a08daap14d36bjsn4ee22ef704f9",
-	"x-rapidapi-host": "horoscopeapi-horoscope-v1.p.rapidapi.com"}
+        "x-rapidapi-key": "fee9b48bc8mshf7ffdb8d9a08daap14d36bjsn4ee22ef704f9",
+        "x-rapidapi-host": "daily-horoscope-api.p.rapidapi.com"
+    }
     response = requests.get(url, headers=headers, params=querystring)
-    return(response.json())
 
-def process_horoscope_data(horoscope, sign):
-    pass
+    if response.status_code == 200:
+        horoscope = response.json()
+        if horoscope.get("status"):
+            reading = horoscope.get("prediction", "No avaliable horoscope")
+            return reading
+    else:
+        return None
 
 if __name__ == "__main__":
 
     name = "Sofia"
     birth_date_str = "2004-09-19"
     birth_time_str = "11:11"
-    birth_place = "Boston"
+    birth_place = "Paris"
     birth_date = dt.strptime(birth_date_str, "%Y-%m-%d").date()
     birth_time = dt.strptime(birth_time_str, "%H:%M").time()
-    birth_place = "Boston"
-    birth_country = "America"
-    timezone = "EST"
 
     lat, lon = get_lat_lon(birth_place)
     if lat and lon:
@@ -193,7 +210,7 @@ if __name__ == "__main__":
             raw = get_birth_chart_data(name, birth_date, birth_time, lat, lon, city, nation, timezone)
             #print(raw)
             if raw and 'data' in raw:
-                planets_df, houses_df, aspects_df = process_birth_chart(raw)
+                planets_df = process_birth_chart(raw)
                 '''
                 print("Planets Data:")
                 print(planets_df)
@@ -202,9 +219,13 @@ if __name__ == "__main__":
                 print("\nAspects Data:")
                 print(aspects_df)
                 '''
-                print(planets_df)
+                #print(planets_df)
                 big_three = get_big_three(raw, planets_df)
-                print(big_three)
+                #print(big_three)
+                main_sign = big_three['sun']
+                print("HOROSCOPE\n")
+                #print(main_sign)
+                print(get_horoscope_data(main_sign))
             else:
                 print("Invalid or empty response")
     else:
