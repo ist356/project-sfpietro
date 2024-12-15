@@ -191,6 +191,38 @@ def get_horoscope_data(sign):
             return reading
     else:
         return None
+    
+def get_more_info(placement, sign):
+    placements_dict = { 
+    "Sun":"represents your core identity, ego, and main essence. It defines the fundamental aspects of your personality and how you express yourself.", 
+    "Moon": "represents your emotional self, instincts, and subconscious. It influences your feelings, moods, and how you nurture yourself and others.", 
+    "Mercury": "represents communication, intellect, and thought processes. It governs how you express yourself, learn, and analyze information.", 
+    "Venus": "represents love, beauty, and relationships. It influences how you approach romance, friendships, and aesthetics.", 
+    "Mars": "represents energy, drive, and aggression. It governs how you assert yourself, pursue goals, and handle conflict.", 
+    "Jupiter": "represents expansion, growth, and luck. It influences your philosophy, morals, and approach to opportunities.", 
+    "Saturn": "represents structure, discipline, and responsibility. It governs lessons, limitations, and how you approach long-term goals.", 
+    "Uranus": "represents innovation, rebellion, and individuality. It influences your approach to change and how you break away from traditions.", 
+    "Neptune": "represents dreams, intuition, and spirituality. It governs your imagination and connection to the mystical aspects of life.", 
+    "Pluto": "represents transformation, power, and rebirth. It governs deep changes, personal growth, and hidden truths."
+    } 
+    zodiac_traits = {
+    "Aries": "courageous, confident, and energetic traits. You're known for being a natural leader and having a strong sense of adventure.", 
+    "Taurus": "reliable, practical, and grounded traits. You love stability, comfort, and the finer things in life.", 
+    "Gemini": "adaptable, curious, and communicative traits. You thrive on intellectual stimulation and social interaction.", 
+    "Cancer": "nurturing, intuitive, and protective traits. You are strongly connected to emotions and home life.", 
+    "Leo": "creative, charismatic, and generous traits. You draw attention and love to inspire others.", 
+    "Virgo": "detail-oriented, analytical, and hardworking traits. You value practicality and are dedicated to helping others.", 
+    "Libra": "diplomatic, charming, and fair-minded traits. You strive for balance and harmony in all aspects of life.", 
+    "Scorpio": "passionate, resourceful, and mysterious traits. You are deeply connected to transformation and intense emotions.",
+    }
+
+    #placement = "Sun"
+    #sign = "Virgo"
+    sign = sign.strip()
+    placement = placement.strip()
+    placement_info = placements_dict[placement]
+    zodiac_info = zodiac_traits[sign] #need code to deal with what to do when the key is not found
+    return placement_info, zodiac_info
 
 if __name__ == "__main__":
 
@@ -230,3 +262,12 @@ if __name__ == "__main__":
                 print("Invalid or empty response")
     else:
         print("Could not fetch data")
+
+'''
+Whats left to do:
+- center the form
+- center the table
+- finish getting more_info to work
+- create test code
+
+'''

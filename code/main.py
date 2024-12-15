@@ -43,21 +43,23 @@ if st.session_state.form_submitted:
         st.caption("Big Three:")
         for key, value in big_three.items():
             st.text(f"Your {key} sign is {value}")
-        st.dataframe(planets_df)
+        columns = ['name','sign','emoji','element','position','house']
+        view = planets_df[columns]
+        st.dataframe(view)
 
-    if st.button("Get Daily Horoscope"):
-        main_sign = big_three['sun']
-        horoscope = get_horoscope_data(main_sign)
-        st.caption(f'"*{horoscope}*"')
+    col1, col2 = st.columns(2)
+    df = planets_df
+    with col1:
+        if st.button("Get Daily Horoscope"):
+            main_sign = big_three['sun']
+            horoscope = get_horoscope_data(main_sign)
+            st.caption(f'"*{horoscope}*"')
+    with col2:
+        placement = st.selectbox("Select a placement:", options=df["name"])
+        sign = df.loc[df["name"] == placement, "sign"].iloc[0]
 
-
-'''
-Whats left to do:
-- make table show only useful information
-- hover feature of details
-- google api to complete search for birth_place
-- make it look pretty
-
-- create test code
-
-'''
+        if st.button("Learn More"):
+            st.write(placement, sign)
+            placement_info, zodiac_info = get_more_info(placement, sign)
+            st.write(f"You have a {sign.lower()} {placement.lower()}")
+            st.write(f"Your {placement.lower()} sign {placement_info} With a {sign} placement, you have {zodiac_info}")
