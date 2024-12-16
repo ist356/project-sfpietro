@@ -55,7 +55,7 @@ if st.session_state.form_submitted:
                     st.caption("Big Three:")
                     for key, value in big_three.items():
                         st.text(f"Your {key} sign is {value}")
-                    columns = ['emoji','name','sign','element','position','house']
+                    columns = ['emoji','sign','element','position','house']
                 with c2:
                     view = planets_df[columns]
                     st.dataframe(view, use_container_width=True)
