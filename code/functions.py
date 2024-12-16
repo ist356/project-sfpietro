@@ -191,7 +191,7 @@ def get_horoscope_data(sign):
     fetch daily horoscope for sign
     '''
     url = "https://daily-horoscope-api.p.rapidapi.com/api/Daily-Horoscope-English/"
-    querystring = {"zodiacSign":sign,"timePeriod":"weekly"}
+    querystring = {"zodiacSign":sign,"timePeriod":"today"}
     headers = {
         "x-rapidapi-key": "fee9b48bc8mshf7ffdb8d9a08daap14d36bjsn4ee22ef704f9",
         "x-rapidapi-host": "daily-horoscope-api.p.rapidapi.com"
